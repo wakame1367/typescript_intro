@@ -1,11 +1,23 @@
 import { NextPage } from "next";
+import { useEffect, useState } from "react";
 
 const IndexPage: NextPage = () => {
-    return <div>猫画像予定地</div>;
+    const [imageUrl, setImageUrl] = useState("");
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        fetchImage().then((newImage) => {
+            setImageUrl(newImage.url);
+            setLoading(false);
+        });
+    }, []);
+    return <div>{loading || <img src={imageUrl} />}</div>;
 };
 export default IndexPage;
 
-const fetchImage = async () => {
+type Image = {
+    url: string;
+};
+const fetchImage = async (): Promise<Image> => {
     const url: string = "https://api.thecatapi.com/v1/images/search";
     const res = await fetch(url);
     const images = await res.json();
